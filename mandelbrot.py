@@ -24,7 +24,7 @@ def mandelbrot(complex_constant, convergence_limit, divergence_limit):
     return n
 
 def generate_mandelbrot(rrange=(-2, 1), irange=(-1, 1)):
-    ''' outputs an image of the mandelbrot set '''
+    ''' outputs an image of the mandelbrot set, rrange determines the range of values used on the real axis, irange determines the range of values used on the imaginary axis'''
     # resolution of the image generated
     width = 1920
     height = 1080
