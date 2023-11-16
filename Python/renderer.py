@@ -44,10 +44,10 @@ class Renderer:
     def zoom(self, event):
         print(event)
         # adjust scale
-        if (event.keysym == 'Up' or event.num == 1):
+        if (event.keysym == "w" or event.keysym == 'Up' or event.num == 1):
             print("zoom in")
             self.scale -= self.scaleFactor
-        elif (event.keysym == 'Down' or event.num == 3):
+        elif (event.keysym == "s" or event.keysym == 'Down' or event.num == 3):
             print("zoom out")
             self.scale += self.scaleFactor
         else:
