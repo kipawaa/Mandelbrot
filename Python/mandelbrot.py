@@ -40,13 +40,10 @@ def mandelbrot(c, convergence_limit):
     return n
 
 
-def generate_mandelbrot(width, height, rrange=[-2, 1], irange=[-1, 1]):
+def generate_mandelbrot(width, height, rrange=[-2, 1], irange=[-1, 1], convergence_limit=80):
     ''' outputs an image of the mandelbrot set, rrange determines the range of values used on the real axis, irange determines the range of values used on the imaginary axis'''
     # frame buffer
     plot = np.zeros((height, width))
-
-    # define convergence limit
-    convergence_limit = 80
 
     # cache the size of the render region to avoid re-computing in the loop
     Ilength = irange[1] - irange[0]
@@ -59,12 +56,10 @@ def generate_mandelbrot(width, height, rrange=[-2, 1], irange=[-1, 1]):
         # window (notice that this is not 0,0 in the render region)
         imag = (y / height) * Ilength + irange[0]
 
-        # TODO mandelbrot is symmetric across x axis so if we have seen the
+        # mandelbrot is symmetric across x axis so if we have seen the
         # opposite of this row we can simply copy it over
-
         zero_mapped = -irange[0] / Ilength * height
         upper_reflected = 2 * zero_mapped
-        
         if zero_mapped < y < min(upper_reflected, height):
             plot[y, :] = plot[int(2 * zero_mapped - y), :]
         else:
@@ -75,19 +70,13 @@ def generate_mandelbrot(width, height, rrange=[-2, 1], irange=[-1, 1]):
                 # determining mandelbrot value at point
                 m = mandelbrot(c, convergence_limit)
 
-                # assigning colour value to point based on number of iterations
-                # required to determine con/di-vergence
-                color = 255 - int(m * 255 / convergence_limit)
-
                 # adding point to stored points
-                plot[y, x] = color
-
+                plot[y, x] = m
     # generate an image from the frame buffer
-    image = Image.fromarray(plot)
-    return image
+    return plot
 
 
 if __name__ == '__main__':
     renderer = Renderer(
-        "Mandelbrot", generate_mandelbrot, (-2, 1), (-1, 1))
+        "Mandelbrot", generate_mandelbrot, (-2, 1), (-1, 1), 600, 400)
     renderer.run()
