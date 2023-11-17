@@ -24,7 +24,7 @@ class Renderer:
             self.height = int(user[1])
 
         # current zoom level and scaling factor
-        self.scaleFactor = 0.05
+        self.scaleFactor = 0.80
         self.scale = 1.0
 
         # image variable to prevent garbage collection
@@ -46,10 +46,10 @@ class Renderer:
         # adjust scale
         if (event.keysym == "w" or event.keysym == 'Up' or event.num == 1):
             print("zoom in")
-            self.scale -= self.scaleFactor
+            self.scale *= self.scaleFactor
         elif (event.keysym == "s" or event.keysym == 'Down' or event.num == 3):
             print("zoom out")
-            self.scale += self.scaleFactor
+            self.scale /= self.scaleFactor
         else:
             return
 
