@@ -2,10 +2,10 @@
 
 from PIL import Image
 import numpy as np
-from main import main
+from renderer import Renderer
 
 
-def burningShip(complex_constant, convergence_limit, divergence_limit):
+def burningShip(complex_constant, convergence_limit):
     ''' returns the number of iterations for a point to be classified as con/di-vergent based on limits given '''
     # value
     z = 0
@@ -14,7 +14,7 @@ def burningShip(complex_constant, convergence_limit, divergence_limit):
     n = 0
 
     # generate new values until point can be said to be con/di-vergent
-    while n < convergence_limit and abs(z) < divergence_limit:
+    while n < convergence_limit and abs(z) < 2:
         # determining next value
         z = complex(abs(z.real), abs(z.imag)) ** 2 + complex_constant
 
@@ -24,32 +24,32 @@ def burningShip(complex_constant, convergence_limit, divergence_limit):
     # return the number of iterations
     return n
 
-def generate_burningShip(width, height, rrange=(-1.8, -1.7), irange=(-0.1, 0.02)):
+def generate_burningShip(width, height, rrange=(-2, -1), irange=(-0.33, 0.0), convergence_limit=60):
     ''' outputs an image of the mandelbrot set, rrange determines the range of values used on the real axis, irange determines the range of values used on the imaginary axis'''
-    # maximum number of iterations until a point is said to be convergent
-    convergence_limit = 80
+    # frame buffer
+    plot = np.zeros((height, width))
 
-    # storing the points generated
-    plot = np.zeros((width, height))
+    # cache the size of the render region to avoid re-computing in the loop
+    Ilength = irange[1] - irange[0]
+    Rlength = rrange[1] - rrange[0]
 
-    for x in range(width):
-        for y in range(height):
+    # compute values for each pixel in the window
+    for y in range(height):
+        imag = (y / height) * Ilength + irange[0]
+
+        for x in range(width):
             # determining complex number for calculations
-            c = complex(rrange[0] + (y / height) * (rrange[1] - rrange[0]),
-                        irange[0] + (x / width) * (irange[1] - irange[0]))
+            c = complex(rrange[0] + (x / width) * Rlength, imag)
 
             # determining mandelbrot value at point
-            m = burningShip(c, convergence_limit, 2)
-
-            # assigning colour value to point based on number of iterations required to determine con/di-vergence
-            color = 255 - int(m * 255 / convergence_limit)
+            m = burningShip(c, convergence_limit)
 
             # adding point to stored points
-            plot[x, y] = color
-
-    # displaying image
-    image = Image.fromarray(plot)
-    return image
+            plot[y, x] = m
+    
+    # generate an image from the frame buffer
+    return plot
 
 if __name__ == '__main__':
-    main(generate_burningShip)
+    renderer = Renderer("Burning Ship", generate_burningShip, (-2.25, 1.5), (-2, 0.5), 600, 400)
+    renderer.run()
