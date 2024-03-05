@@ -121,7 +121,7 @@ int main() {
 	int rrange[2] = {-2, 1};
 	int irange[2] = {-1, 1};
 
-	printf("starting calculations...\n");
+	//printf("starting calculations...\n");
 
 	for (int y = 0; y < height; y++) {
 		for (int x = 0; x < width; x++) {
@@ -131,7 +131,6 @@ int main() {
 			// define the complex value of the set at this point
 			double complex c = (rrange[0] + (x / width) * (rrange[1] - rrange[0])) + // real part of the number
 						(irange[0] + (y / height) * (irange[1] - irange[0])); // imaginary part of the number
-			printf("got the complex number created\n");
 
 			// use the kernel to get the mandelbrot value at this point
 			// write data to the buffers
@@ -139,17 +138,17 @@ int main() {
 			ret = clEnqueueWriteBuffer(queue, convergenceLimitBuffer, CL_TRUE, 0, sizeof(int), &convergenceLimit, 0, NULL, NULL);
 			ret = clEnqueueWriteBuffer(queue, divergenceLimitBuffer, CL_TRUE, 0, sizeof(int), &divergenceLimit, 0, NULL, NULL);
 			ret = clEnqueueWriteBuffer(queue, numIterationsBuffer, CL_TRUE, 0, sizeof(int), &numIterations, 0, NULL, NULL);
-			printf("buffers enqueued\n");
+			//printf("buffers enqueued\n");
 
 			// set kernel arguments
-			ret = clSetKernelArg(kernel, 0, sizeof(cl_mem), (void*)complexBuffer);
-			printf("kernel arg 0 error: %d\n", ret);
-			ret = clSetKernelArg(kernel, 1, sizeof(cl_mem), (void*)convergenceLimitBuffer);
-			printf("kernel arg 1 error: %d\n", ret);
-			ret = clSetKernelArg(kernel, 2, sizeof(cl_mem), (void*)divergenceLimitBuffer);
-			printf("kernel arg 2 error: %d\n", ret);
-			ret = clSetKernelArg(kernel, 3, sizeof(cl_mem), (void*)numIterationsBuffer);
-			printf("kernel args set\n");
+			ret = clSetKernelArg(kernel, 0, sizeof(cl_mem), (void*)&complexBuffer);
+			if (ret) printf("kernel arg 0 error: %d\n", ret);
+			ret = clSetKernelArg(kernel, 1, sizeof(cl_mem), (void*)&convergenceLimitBuffer);
+			if (ret) printf("kernel arg 1 error: %d\n", ret);
+			ret = clSetKernelArg(kernel, 2, sizeof(cl_mem), (void*)&divergenceLimitBuffer);
+			if (ret) printf("kernel arg 2 error: %d\n", ret);
+			ret = clSetKernelArg(kernel, 3, sizeof(cl_mem), (void*)&numIterationsBuffer);
+			//printf("kernel args set\n");
 			
 			// run the kernel
 			ret = clEnqueueNDRangeKernel(queue, kernel, 1, NULL, &globalSize, &localSize, 0, NULL, NULL);
@@ -158,7 +157,7 @@ int main() {
 			ret = clEnqueueReadBuffer(queue, numIterationsBuffer, CL_TRUE, 0, sizeof(int), &numIterations, 0, NULL, NULL);
 
 			// copy the number of iterations to the map
-			printf("modifying the map\n");
+			//printf("modifying the map\n");
 			img[y * width + x] = numIterations;
 		}
 	}

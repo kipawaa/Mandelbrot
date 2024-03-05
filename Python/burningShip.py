@@ -24,7 +24,7 @@ def burningShip(complex_constant, convergence_limit):
     # return the number of iterations
     return n
 
-def generate_burningShip(width, height, rrange=(-2, -1), irange=(-0.33, 0.0), convergence_limit=60):
+def generate_burningShip(width, height, rrange=(-2, -1), irange=(-0.33, 0.0), convergence_limit=255):
     ''' outputs an image of the mandelbrot set, rrange determines the range of values used on the real axis, irange determines the range of values used on the imaginary axis'''
     # frame buffer
     plot = np.zeros((height, width))
